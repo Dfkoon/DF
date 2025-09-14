@@ -748,3 +748,255 @@
             border-radius: 6px;
             text-decoration: none;
         }
+
+        /* About Modal Styles */
+        .about-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(44, 62, 80, 0.92);
+            z-index: 2000;
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            animation: fadeIn 0.4s;
+        }
+
+        .about-content {
+            background: #fff;
+            color: #222;
+            max-width: 420px;
+            margin: 6% auto;
+            padding: 2.2rem 2rem 1.5rem 2rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #0003;
+            position: relative;
+            font-size: 1.08rem;
+            text-align: right;
+        }
+
+        #close-about {
+            float: left;
+            background: #902114;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .about-title {
+            color: #902114;
+            margin-bottom: 1rem;
+        }
+
+        .about-hr {
+            margin: 1.2rem 0;
+            border: none;
+            border-top: 1.5px solid #90211433;
+        }
+
+        #about-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #902114;
+            color: #fff;
+            padding: 0.0rem 0rem;
+            border: none;
+            border-radius: 90px;
+            box-shadow: 0 4px 100px rgba(0,0,0,0.2);
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 1rem;
+        }
+
+        #about-btn i {
+            margin-left: 0.0em;
+        }
+
+        .about-btn-small {
+            position: fixed;
+            bottom: 18px;
+            left: 18px;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, rgba(192,57,43,0.18) 0%, rgba(192,57,43,0.13) 100%);
+            color: #c0392b;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(192,57,43,0.13), 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 100;
+            transition: background 0.2s, box-shadow 0.2s;
+            animation: aboutPulse 1.7s infinite;
+            border: 2px solid rgba(192,57,43,0.22);
+        }
+        @keyframes aboutPulse {
+            0% { box-shadow: 0 0 0 0 rgba(192,57,43,0.18); }
+            50% { box-shadow: 0 0 0 8px rgba(192,57,43,0.09); }
+            100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.18); }
+        }
+        .about-btn-small:hover {
+            background: linear-gradient(135deg, rgba(192,57,43,0.28) 0%, rgba(192,57,43,0.18) 100%);
+            color: #fff;
+            box-shadow: 0 0 0 12px rgba(192,57,43,0.13);
+        }
+        .about-btn-small i {
+            margin: 0;
+        }
+        @media (max-width: 600px) {
+            .about-btn-small {
+                bottom: 8px;
+                left: 8px;
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Hide element by default */
+        .hidden {
+            display: none;
+        }
+
+        /* Close button styles for about modal */
+        .close-about-btn {
+            float: left;
+            background: #902114;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* SVG background styles */
+        .diagonal-lines-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* تسجيل الدخول */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(44,62,80,0.92);
+            z-index: 2100;
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            animation: fadeIn 0.4s;
+        }
+
+        .login-content {
+            background: #fff;
+            color: #222;
+            max-width: 340px;
+            margin: 10% auto;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px #0003;
+            position: relative;
+            font-size: 1.08rem;
+            text-align: center;
+        }
+
+        .login-title {
+            color: #902114;
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+        }
+
+        .login-input {
+            width: 90%;
+            padding: 0.7rem;
+            border: 1.5px solid #90211433;
+            border-radius: 8px;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            background: #f8f8f8;
+            color: #222;
+        }
+
+        .login-btn {
+            background: #902114;
+            color: #fff;
+            border: none;
+            padding: 0.7rem 2.2rem;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #c0392b;
+        }
+
+        .login-error {
+            color: #c0392b;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            min-height: 1.2em;
+        }
+
+        .login-open-btn {
+            position: fixed;
+            bottom: 18px;
+            left: 52px;
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, rgba(44,62,80,0.18) 0%, rgba(192,57,43,0.13) 100%);
+            color: #902114;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 101;
+            transition: background 0.2s;
+        }
+
+        .login-open-btn:hover {
+            background: #90211422;
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .login-open-btn {
+                bottom: 8px;
+                left: 38px;
+                width: 18px;
+                height: 18px;
+                font-size: 0.9rem;
+            }
+            .login-content {
+                max-width: 98vw;
+                padding: 1.2rem 0.7rem 1rem 0.7rem;
+            }
+        }
