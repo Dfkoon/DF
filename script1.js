@@ -48,8 +48,12 @@ function renderStats() {
         document.querySelector('.container').prepend(statsDiv);
     }
     const stats = getStats();
+    let badges = '';
+    if (stats.solvedCount >= 5) badges += '<span class="badge" style="background:#27ae60;color:#fff;padding:0.3em 1em;border-radius:16px;margin:0 0.3em;font-size:0.95em;"><i class="fas fa-star"></i> مبتدئ</span>';
+    if (stats.solvedCount >= 10) badges += '<span class="badge" style="background:#f39c12;color:#fff;padding:0.3em 1em;border-radius:16px;margin:0 0.3em;font-size:0.95em;"><i class="fas fa-trophy"></i> محقق متقدم</span>';
+    if (stats.solvedCount >= 15) badges += '<span class="badge" style="background:#902114;color:#fff;padding:0.3em 1em;border-radius:16px;margin:0 0.3em;font-size:0.95em;"><i class="fas fa-certificate"></i> بطل القضايا</span>';
     statsDiv.innerHTML = `<strong>إحصائياتك الشخصية:</strong><br>
-    عدد القضايا المحلولة: <span style='color:#27ae60;font-weight:bold;'>${stats.solvedCount}</span> / ${stats.totalCount}<br>
+    عدد القضايا المحلولة: <span style='color:#27ae60;font-weight:bold;'>${stats.solvedCount}</span> / ${stats.totalCount} ${badges}<br>
     الوقت المستغرق منذ أول زيارة: <span style='color:#f39c12;font-weight:bold;'>${stats.minutes} دقيقة</span><br>
     أصعب قضية تم حلها: <span style='color:#902114;font-weight:bold;'>${stats.hardestTitle}</span>`;
 }
@@ -74,6 +78,10 @@ function updateCounters() {
         }, 600);
     } else {
         noticeBox.style.display = 'none';
+    }
+    // إظهار زر الشهادة بعد حل 15 قضية
+    if (complexCases.filter(c => c.solved).length >= 15) {
+        showCertificatePrompt();
     }
 }
 
@@ -162,6 +170,48 @@ function showCaseDetails(idx) {
             `}
         </div>
     `;
+    // إضافة قسم التعليقات والتقييم
+    let comments = JSON.parse(localStorage.getItem('case_comments_' + idx) || '[]');
+    let avgRating = comments.length ? (comments.reduce((a, b) => a + b.rating, 0) / comments.length).toFixed(1) : '—';
+    let commentsHtml = `<div class='comments-section' style='margin-top:2.5rem;background:#fff2;padding:1.2rem;border-radius:10px;'>
+        <h3 style='color:#902114;margin-bottom:1rem;'><i class='fas fa-comments'></i> التعليقات والتقييم</h3>
+        <div style='margin-bottom:1rem;'>
+            <strong>متوسط التقييم:</strong> <span style='color:#f39c12;font-size:1.1em;'>${avgRating}</span> ⭐
+        </div>
+        <form id='comment-form-${idx}' style='margin-bottom:1.2rem;'>
+            <textarea id='comment-text-${idx}' rows='2' style='width:100%;border-radius:8px;padding:0.7rem;margin-bottom:0.5rem;' placeholder='اكتب تعليقك هنا...'></textarea>
+            <div style='margin-bottom:0.7rem;'>
+                <label>تقييمك: </label>
+                <select id='comment-rating-${idx}' style='border-radius:6px;padding:0.2rem 0.7rem;'>
+                    <option value='5'>5 ⭐</option>
+                    <option value='4'>4 ⭐</option>
+                    <option value='3'>3 ⭐</option>
+                    <option value='2'>2 ⭐</option>
+                    <option value='1'>1 ⭐</option>
+                </select>
+            </div>
+            <button type='submit' style='background:#27ae60;color:#fff;padding:0.5rem 1.2rem;border:none;border-radius:8px;font-weight:bold;cursor:pointer;'>إرسال التعليق</button>
+        </form>
+        <div id='comments-list-${idx}'>
+            ${comments.map(cmt => `<div style='background:#fff3cd;color:#902114;padding:0.7rem;border-radius:8px;margin-bottom:0.7rem;'><strong>⭐ ${cmt.rating}</strong> - ${cmt.text}</div>`).join('')}
+        </div>
+    </div>`;
+    caseDetailsDiv.innerHTML += commentsHtml;
+    // منطق إرسال التعليق
+    setTimeout(() => {
+        const form = document.getElementById('comment-form-' + idx);
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                const text = document.getElementById('comment-text-' + idx).value.trim();
+                const rating = parseInt(document.getElementById('comment-rating-' + idx).value);
+                if (!text) return;
+                comments.push({ text, rating });
+                localStorage.setItem('case_comments_' + idx, JSON.stringify(comments));
+                showCaseDetails(idx);
+            };
+        }
+    }, 100);
     caseDetailsDiv.scrollIntoView({ behavior: 'smooth' });
     currentCaseIndex = idx;
     // زر الرجوع
@@ -173,10 +223,29 @@ function showCaseDetails(idx) {
     if (solveBtn) {
         solveBtn.onclick = () => {
             solutionModal.style.display = 'block';
+            // استرجاع الإجابات المؤقتة إن وجدت
+            solutionStep = c._solutionStep || 0;
+            solutionAnswers = c._solutionAnswers ? [...c._solutionAnswers] : [];
             solutionInput.value = '';
-            solutionInput.placeholder = 'اكتب اسم المشتبه...';
-            solutionStep = 0;
-            solutionAnswers = [];
+            if (solutionStep > 0 && c.solution.length > 1) {
+                solutionInput.placeholder = `اكتب اسم المشتبه التالي (${solutionStep + 1} من ${c.solution.length})...`;
+                // إعادة زر الاطلاع على تفاصيل القضية إذا كان في منتصف الحل
+                let viewBtn = document.getElementById('view-case-btn');
+                if (!viewBtn) {
+                    viewBtn = document.createElement('button');
+                    viewBtn.id = 'view-case-btn';
+                    viewBtn.className = 'submit-solution';
+                    viewBtn.style = 'margin-top:1.2rem;background:#902114;color:#fff;';
+                    viewBtn.innerHTML = '<i class="fas fa-eye"></i> الاطلاع على تفاصيل القضية';
+                    solutionModal.querySelector('.solution-buttons').appendChild(viewBtn);
+                    viewBtn.onclick = function() {
+                        solutionModal.style.display = 'none';
+                        showCaseDetails(currentCaseIndex);
+                    };
+                }
+            } else {
+                solutionInput.placeholder = 'اكتب اسم المشتبه...';
+            }
             solutionInput.focus();
             // رسالة توضيحية إذا كان هناك أكثر من مشتبه
             const c = complexCases[idx];
@@ -248,46 +317,102 @@ submitSolutionBtn.onclick = () => {
         solutionInput.placeholder = 'يرجى كتابة اسم المشتبه!';
         return;
     }
-    // تحقق مرن من الحل
-    const expected = c.solution[solutionStep];
-    if (expected && normalizeAnswer(expected) === normalizeAnswer(answer)) {
-        solutionAnswers.push(answer);
-        solutionStep++;
-        if (solutionStep < c.solution.length) {
-            solutionInput.value = '';
-            solutionInput.style.borderColor = '';
-            solutionInput.placeholder = `اكتب اسم المشتبه التالي (${solutionStep + 1} من ${c.solution.length})...`;
-            return;
+    // تحقق مرن من الحل (أي ترتيب)
+    if (c.solution.length > 1) {
+        // إذا كانت الإجابة صحيحة ولم تدخل من قبل
+        const normalized = normalizeAnswer(answer);
+        const normalizedSolutions = c.solution.map(normalizeAnswer);
+        if (normalizedSolutions.includes(normalized) && !solutionAnswers.map(normalizeAnswer).includes(normalized)) {
+            solutionAnswers.push(answer);
+            solutionStep = solutionAnswers.length;
+            c._solutionAnswers = [...solutionAnswers];
+            c._solutionStep = solutionStep;
+            // زر الاطلاع على تفاصيل القضية بعد أول إجابة صحيحة
+            if (solutionStep === 1) {
+                let viewBtn = document.getElementById('view-case-btn');
+                if (!viewBtn) {
+                    viewBtn = document.createElement('button');
+                    viewBtn.id = 'view-case-btn';
+                    viewBtn.className = 'submit-solution';
+                    viewBtn.style = 'margin-top:1.2rem;background:#902114;color:#fff;';
+                    viewBtn.innerHTML = '<i class="fas fa-eye"></i> الاطلاع على تفاصيل القضية';
+                    solutionModal.querySelector('.solution-buttons').appendChild(viewBtn);
+                    viewBtn.onclick = function() {
+                        solutionModal.style.display = 'none';
+                        showCaseDetails(currentCaseIndex);
+                    };
+                }
+            }
+            if (solutionAnswers.length < c.solution.length) {
+                solutionInput.value = '';
+                solutionInput.style.borderColor = '';
+                solutionInput.placeholder = `اكتب اسم مشتبه آخر (${solutionAnswers.length + 1} من ${c.solution.length})...`;
+                return;
+            } else {
+                c.solved = true;
+                delete c._solutionAnswers;
+                delete c._solutionStep;
+                solutionModal.style.display = 'none';
+                showCaseDetails(currentCaseIndex);
+                updateCounters();
+                renderCases();
+                solutionStep = 0;
+                solutionAnswers = [];
+                audioSuccess.currentTime = 0;
+                audioSuccess.play();
+                solutionModal.classList.add('solved-success-flash');
+                setTimeout(() => {
+                    solutionModal.classList.remove('solved-success-flash');
+                    alert('أحسنت! تم حل القضية بنجاح ✅');
+                }, 600);
+            }
         } else {
+            solutionInput.style.borderColor = 'var(--warning-color)';
+            solutionInput.value = '';
+            solutionInput.placeholder = 'الإجابة غير صحيحة أو مكررة، حاول مرة أخرى!';
+            // لا تصفر الإجابات، فقط أعطِ تنبيه
+            audioError.currentTime = 0;
+            audioError.play();
+            solutionModal.classList.add('solved-error');
+            setTimeout(() => {
+                solutionModal.classList.remove('solved-error');
+            }, 600);
+        }
+    } else {
+        // قضية بمشتبه واحد فقط
+        const expected = c.solution[solutionStep];
+        if (expected && normalizeAnswer(expected) === normalizeAnswer(answer)) {
+            solutionAnswers.push(answer);
+            solutionStep++;
             c.solved = true;
+            delete c._solutionAnswers;
+            delete c._solutionStep;
             solutionModal.style.display = 'none';
             showCaseDetails(currentCaseIndex);
             updateCounters();
             renderCases();
             solutionStep = 0;
             solutionAnswers = [];
-            // مؤثر صوتي وبصري للنجاح
             audioSuccess.currentTime = 0;
             audioSuccess.play();
-            solutionModal.classList.add('solved-success');
+            solutionModal.classList.add('solved-success-flash');
             setTimeout(() => {
-                solutionModal.classList.remove('solved-success');
+                solutionModal.classList.remove('solved-success-flash');
                 alert('أحسنت! تم حل القضية بنجاح ✅');
             }, 600);
+        } else {
+            solutionInput.style.borderColor = 'var(--warning-color)';
+            solutionInput.value = '';
+            solutionInput.placeholder = 'الإجابة غير صحيحة، حاول مرة أخرى!';
+            solutionStep = 0;
+            solutionAnswers = [];
+            audioError.currentTime = 0;
+            audioError.play();
+            solutionModal.classList.add('solved-error');
+            setTimeout(() => {
+                solutionModal.classList.remove('solved-error');
+            }, 600);
         }
-    } else {
-        solutionInput.style.borderColor = 'var(--warning-color)';
-        solutionInput.value = '';
-        solutionInput.placeholder = 'الإجابة غير صحيحة، حاول مرة أخرى!';
-        solutionStep = 0;
-        solutionAnswers = [];
-        // مؤثر صوتي وبصري للخطأ
-        audioError.currentTime = 0;
-        audioError.play();
-        solutionModal.classList.add('solved-error');
-        setTimeout(() => {
-            solutionModal.classList.remove('solved-error');
-        }, 600);
     }
 };
 
@@ -311,6 +436,22 @@ if (aboutBtn && aboutModal && closeAbout) {
     };
     window.addEventListener('click', function(e) {
         if (e.target === aboutModal) aboutModal.style.display = 'none';
+    });
+}
+
+// نافذة تعليمات الاستخدام
+const helpBtn = document.getElementById('help-btn');
+const helpModal = document.getElementById('help-modal');
+const closeHelp = document.getElementById('close-help');
+if (helpBtn && helpModal && closeHelp) {
+    helpBtn.onclick = () => {
+        helpModal.style.display = 'block';
+    };
+    closeHelp.onclick = () => {
+        helpModal.style.display = 'none';
+    };
+    window.addEventListener('click', function(e) {
+        if (e.target === helpModal) helpModal.style.display = 'none';
     });
 }
 
@@ -344,18 +485,111 @@ window.addEventListener('DOMContentLoaded', () => {
 updateCounters();
 renderCases();
 
-window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue = '';
-    alert('تم استعادة تقدمك، ولا يتم فقدان التقدم.');
+// حفظ واسترجاع التقدم من localStorage
+function saveProgress() {
+    const solvedArr = complexCases.map(c => c.solved ? 1 : 0);
+    localStorage.setItem('koon_progress', JSON.stringify(solvedArr));
+}
+function loadProgress() {
+    const saved = localStorage.getItem('koon_progress');
+    if (saved) {
+        const arr = JSON.parse(saved);
+        arr.forEach((v, i) => { if (complexCases[i]) complexCases[i].solved = !!v; });
+    }
+}
+
+// زر حفظ التقدم
+let saveBtn = document.getElementById('save-progress-btn');
+if (saveBtn) {
+    saveBtn.onclick = function() {
+        saveProgress();
+        // إظهار رسالة تأكيد أعلى الصفحة بشكل واضح
+        let notif = document.getElementById('save-progress-notif');
+        if (!notif) {
+            notif = document.createElement('div');
+            notif.id = 'save-progress-notif';
+            notif.style = 'position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#27ae60;color:#fff;padding:1rem 2.2rem;border-radius:12px;font-weight:bold;z-index:9999;box-shadow:0 2px 12px #0002;font-size:1.15rem;transition:opacity 0.3s;opacity:0.97;';
+            notif.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.3em;margin-left:0.5em;"></i> تم حفظ جميع تقدماتك بنجاح! يمكنك استرجاعها حتى بعد إغلاق المتصفح.';
+            document.body.appendChild(notif);
+        } else {
+            notif.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.3em;margin-left:0.5em;"></i> تم حفظ جميع تقدماتك بنجاح! يمكنك استرجاعها حتى بعد إغلاق المتصفح.';
+            notif.style.display = '';
+        }
+        notif.classList.add('notif-flash');
+        audioNotif.currentTime = 0;
+        audioNotif.play();
+        setTimeout(()=>{
+            notif.style.display = 'none';
+            notif.classList.remove('notif-flash');
+        }, 2500);
+    };
+}
+
+// عند تحميل الصفحة استرجع التقدم
+window.addEventListener('DOMContentLoaded', () => {
+    loadProgress();
+    toggleNoticeBox();
+    renderStats();
 });
 
-// دالة لتطبيع الإجابات (إزالة الحركات والمسافات)
+// عند تحديث القضايا أو حلها احفظ التقدم تلقائياً
+function updateCounters() {
+    allCounter.textContent = complexCases.length;
+    murderCounter.textContent = complexCases.filter(c => c.category === 'murder').length;
+    theftCounter.textContent = complexCases.filter(c => c.category === 'theft').length;
+    mysteryCounter.textContent = complexCases.filter(c => c.category === 'mystery').length;
+    document.getElementById('arson-counter').textContent = complexCases.filter(c => c.solved).length;
+    totalCountSpan.textContent = complexCases.length;
+    solvedCountSpan.textContent = complexCases.filter(c => c.solved).length;
+    updateProgressBar();
+    saveProgress();
+    renderStats();
+    // إظهار صندوق الشهادة فقط عند حل جميع القضايا
+    if (complexCases.length > 0 && complexCases.every(c => c.solved)) {
+        noticeBox.style.display = '';
+        setTimeout(() => {
+            noticeBox.scrollIntoView({behavior: 'smooth'});
+        }, 600);
+    } else {
+        noticeBox.style.display = 'none';
+    }
+}
+
+// دالة لتطبيع الإجابات (إزالة الحركات والمسافات والفواصل والتنوين والتعريف)
 function normalizeAnswer(str) {
-    // إزالة المسافات والحركات العربية
-    return str.replace(/\s/g, '').replace(/[\u064B-\u0652]/g, '').replace(/[\u0640]/g, '').toLowerCase();
+    // إزالة المسافات، الحركات، التنوين، الفواصل، التعريف، الرموز غير حرفية
+    return str
+        .replace(/\s/g, '') // إزالة المسافات
+        .replace(/[\u064B-\u0652]/g, '') // إزالة الحركات والتنوين
+        .replace(/[\u0640]/g, '') // إزالة الكشيدة
+        .replace(/[.,;،؛:!?؟\-]/g, '') // إزالة الفواصل والرموز
+        .replace(/^ال/, '') // إزالة "ال" التعريف من البداية
+        .replace(/^(دكتور|دكتورة|د\.?|د\.?\s)/, '') // إزالة دكتور/دكتورة
+        .toLowerCase();
 }
 
 // تحميل المؤثرات الصوتية
 const audioSuccess = new Audio('https://cdn.pixabay.com/audio/2022/10/16/audio_12b6b1b2b2.mp3'); // صوت نجاح
 const audioError = new Audio('https://cdn.pixabay.com/audio/2022/10/16/audio_126b6b1b1b.mp3'); // صوت خطأ
+// تحميل مؤثر صوتي للتنبيه
+const audioNotif = new Audio('https://cdn.pixabay.com/audio/2022/10/16/audio_126b6b1b1b.mp3'); // صوت تنبيه
+
+function showCertificatePrompt() {
+    let certPrompt = document.getElementById('certificate-prompt');
+    if (!certPrompt) {
+        certPrompt = document.createElement('div');
+        certPrompt.id = 'certificate-prompt';
+        certPrompt.style = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#902114;color:#fff;padding:1.2rem 2.2rem;border-radius:14px;font-weight:bold;z-index:9999;box-shadow:0 2px 12px #90211422;font-size:1.15rem;transition:opacity 0.3s;opacity:0.97;text-align:center;';
+        certPrompt.innerHTML = '<i class="fas fa-certificate" style="font-size:1.3em;margin-left:0.5em;"></i> لقد قمت بحل 15 قضية! إذا ترغب بطلب الشهادة الآن اضغط الزر التالي:<br><a href="https://forms.gle/dhQFcnDsJVmFHqKa7" target="_blank" class="certificate-link-custom" style="display:inline-block;margin-top:12px;"><i class="fas fa-certificate"></i> طلب الشهادة</a>';
+        document.body.appendChild(certPrompt);
+    } else {
+        certPrompt.style.display = '';
+    }
+    certPrompt.classList.add('notif-flash');
+    audioNotif.currentTime = 0;
+    audioNotif.play();
+    setTimeout(()=>{
+        certPrompt.style.display = 'none';
+        certPrompt.classList.remove('notif-flash');
+    }, 8000);
+}
