@@ -562,6 +562,53 @@
             }
         }
 
+        @media (max-width: 600px) {
+            .save-progress-btn-small, #help-btn, #about-btn {
+                top: 8px !important;
+                right: auto !important;
+                left: 8px !important;
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+                margin-right: 0.2rem;
+            }
+            #help-btn {
+                left: 44px !important;
+            }
+            #about-btn {
+                left: 80px !important;
+            }
+            .header-overflow-fix {
+                flex-direction: column;
+                gap: 0.7rem;
+                align-items: flex-start;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            .tagline {
+                font-size: 1rem;
+            }
+            .cases-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .case-card {
+                padding: 0.5rem;
+            }
+            .about-modal, #help-modal {
+                padding: 0;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+            .about-content {
+                max-width: 98vw;
+                padding: 1.2rem 0.7rem 1rem 0.7rem;
+                font-size: 1rem;
+            }
+        }
+
         /* ألوان القضية المحلولة بالاخضر */
         .case-details.solved-green {
             border: 2px solid #1f086b !important;
@@ -999,4 +1046,125 @@
                 max-width: 98vw;
                 padding: 1.2rem 0.7rem 1rem 0.7rem;
             }
+        }
+
+        .save-progress-btn-header {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 0.7rem 1.5rem;
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 2px 8px #27ae6022;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .save-progress-btn-header:hover {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            box-shadow: 0 4px 16px #27ae6044;
+        }
+        .save-progress-btn-header i {
+            font-size: 1.3em;
+        }
+        .save-progress-text {
+            font-size: 1.05em;
+            font-weight: bold;
+        }
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .header-inner-flex {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .header-overflow-fix {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .header-overflow-fix .logo,
+        .header-overflow-fix .main-logo-img,
+        .header-overflow-fix .save-progress-btn-header {
+            margin: 0;
+        }
+        .header-overflow-fix > div {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .save-progress-btn-small {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #27ae6022;
+            cursor: pointer;
+            z-index: 101;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .save-progress-btn-small:hover {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px #27ae6044;
+        }
+        #help-btn {
+            position: absolute;
+            top: 15px;
+            right: 60px;
+            background: #f39c12;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #f39c1222;
+            cursor: pointer;
+            z-index: 101;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        #help-btn:hover {
+            background: #e67e22;
+            color: #fff;
+            box-shadow: 0 4px 16px #f39c1244;
+        }
+
+        /* الرسائل المهمة */
+        .notif-flash {
+            animation: notifFlash 0.7s;
+        }
+        @keyframes notifFlash {
+            0% { box-shadow: 0 0 0 0 #27ae60cc; }
+            50% { box-shadow: 0 0 16px 8px #27ae60cc; }
+            100% { box-shadow: 0 0 0 0 #27ae60cc; }
+        }
+        .solved-success-flash {
+            animation: solvedFlash 0.7s;
+        }
+        @keyframes solvedFlash {
+            0% { box-shadow: 0 0 0 0 #27ae60cc; }
+            50% { box-shadow: 0 0 32px 12px #27ae60cc; }
+            100% { box-shadow: 0 0 0 0 #27ae60cc; }
         }
