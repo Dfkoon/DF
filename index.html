@@ -12,12 +12,16 @@
 </head>
 <body>
     <header>
-        <img src="img/hiu-removebg-preview.png" alt="شعار ألغاز الجريمة" class="main-logo-img">
-        <div class="header-overflow-fix">
-            <div class="logo"><i class="fas fa-detective"></i>  المحقق كـــون</div>
-            <p class="tagline">تحقيق في أغرب القضايا وأكثرها تعقيدًا</p>
+        <div class="header-overflow-fix header-flex">
+            <div class="header-inner-flex">
+                <img src="img/hiu-removebg-preview.png" alt="شعار ألغاز الجريمة" class="main-logo-img">
+                <div class="logo"><i class="fas fa-detective"></i>  المحقق كـــون</div>
+                <button id="save-progress-btn" class="save-progress-btn-small" title="حفظ التقدم"><i class="fas fa-save"></i></button>
+
+            </div>
         </div>
         <button id="about-btn" class="about-btn-small" title="حول الموقع"><i class="fas fa-info"></i></button>
+        <button id="help-btn" class="about-btn-small" style="right:60px;" title="تعليمات"><i class="fas fa-question-circle"></i></button>
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress-fill progress-fill-100"></div>
@@ -89,9 +93,37 @@
             <p><strong>نبذة عن الموقع:</strong><br>موقع المحقق كون يقدم ألغاز وقضايا بوليسية تفاعلية، حيث يمكنك اختبار مهاراتك في التحليل وحل الجرائم الافتراضية. استمتع بتجربة التحقيق واكتشف الأسرار!</p>
             <hr class="about-hr">
             <p><strong>نبذة عن المطور:</strong><br>تطوير: حسين الديات.<br>مطور ويب ومهتم بصناعة المحتوى التفاعلي والتعليم الرقمي.</p>
+            <hr class="about-hr">
+            <p><strong>تواصل معي:</strong><br>يمكنك التواصل معي عبر وسائل التواصل الاجتماعي أو البريد الإلكتروني للمزيد من المعلومات أو التعاون.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/hussien-aldayyat-a8b56431a" target="_blank" rel="noopener" class="social-link" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:kon2002p@gmail.com" target="_blank" rel="noopener" class="social-link" title="Email"><i class="fas fa-envelope"></i></a>
+                <!-- رابط واتساب -->
+                <a href="https://wa.me/962782934685" target="_blank" rel="noopener" class="social-link" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <!-- رابط جيت هب -->
+                <a href="https://github.com" target="_blank" rel="noopener" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
+            </div>
         </div>
     </div>
-    <div class="container">
+    <div id="help-modal" class="about-modal hidden">
+        <div class="about-content">
+            <button id="close-help" class="close-about-btn">إغلاق</button>
+            <h2 class="about-title"><i class="fas fa-question-circle"></i> تعليمات الاستخدام</h2>
+            <p><strong>كيف تستخدم الموقع؟</strong><br>
+            1. اختر أي قضية من القائمة واضغط على "تحقق في القضية".<br>
+            2. اقرأ تفاصيل القضية والأدلة والمشتبهين.<br>
+            3. اضغط على زر "حل القضية" وأدخل اسم المشتبه الذي تعتقد أنه الجاني.<br>
+            4. إذا كانت القضية تتطلب أكثر من مشتبه، أدخل جميع الأسماء المطلوبة.<br>
+            5. عند حل القضية ستظهر لك علامة ✅ ويمكنك متابعة القضايا الأخرى.<br>
+            6. يمكنك حفظ تقدمك بالضغط على زر "حفظ التقدم" في أعلى الصفحة.<br>
+            7. بعد حل 15 قضية يمكنك طلب شهادة الإنجاز.<br>
+            <br><strong>نصائح:</strong><br>
+            - راجع الأدلة جيداً قبل اختيار المشتبه.<br>
+            - استخدم زر "تلميح" إذا واجهت صعوبة.<br>
+            - يمكنك التنقل بين الأقسام من خلال التبويبات أعلى الصفحة.<br>
+            </p>
+        </div>
+    </div>
         <h2 class="section-title">القضايا المعقدة</h2>
         <div class="cases-grid" id="cases-container">
             <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
@@ -103,7 +135,7 @@
                             عمل سكرين شوت لقسم القضايا التي تم حلها من اجل طلب الشهادة.
                         </span>
                         <span class="notice-lightred"></span>
-                        <img src="img/‏لقطة الشاشة ٢٠٢٥-٠٩-١٣ في ١١.٤٢.٥٨.png" alt="نموذج الشهادة" class="certificate-img certificate-img-custom">
+                        <img src="img/322h.png" alt="نموذج الشهادة" class="certificate-img certificate-img-custom">
                         <span class="notice-lightred"></span>
                         <a href="https://forms.gle/dhQFcnDsJVmFHqKa7" target="_blank" rel="noopener" class="certificate-link certificate-link-custom">
                             <i class="fas fa-certificate"></i> طلب شهادة
