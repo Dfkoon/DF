@@ -1,0 +1,127 @@
+/* ...existing code... */
+.animated-bg-line {
+    stroke: #902114;
+    stroke-width: 2;
+    opacity: 0.18;
+    transition: stroke 0.3s, opacity 0.3s;
+}
+@media (max-width: 600px) {
+    .animated-bg-line {
+        stroke-width: 1.2;
+        opacity: 0.13;
+    }
+}
+#search-box {
+    width: 100%;
+    max-width: 420px;
+    margin: 1.2rem auto 1.2rem auto;
+    text-align: center;
+}
+.case-search-input {
+    width: 90%;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    border: 1.5px solid #902114;
+    font-size: 1.08rem;
+    background: #fff;
+    color: #902114;
+    box-shadow: 0 2px 8px #90211422;
+    margin-bottom: 0.5rem;
+    transition: border 0.2s;
+}
+.case-search-input:focus {
+    border-color: #27ae60;
+    outline: none;
+}
+.site-notification {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 220px;
+    max-width: 90vw;
+    background: #203a43;
+    color: #fff;
+    padding: 1rem 2.2rem;
+    border-radius: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 2px 12px #0002;
+    font-size: 1.08rem;
+    text-align: center;
+    display: none;
+    animation: notifFlash 0.7s;
+}
+.notif-success {
+    background: #27ae60;
+}
+.notif-info {
+    background: #902114;
+}
+.notif-error {
+    background: #c0392b;
+}
+.notif-flash {
+    animation: notifFlash 0.7s;
+}
+@keyframes notifFlash {
+    0% { box-shadow: 0 0 0 0 #27ae60cc; }
+    50% { box-shadow: 0 0 16px 8px #27ae60cc; }
+    100% { box-shadow: 0 0 0 0 #27ae60cc; }
+}
+#leaderboard-btn {
+    position: absolute;
+    top: 15px;
+    right: 110px;
+    background: #f39c12;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px #f39c1222;
+    cursor: pointer;
+    z-index: 101;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+#leaderboard-btn:hover {
+    background: #e67e22;
+    color: #fff;
+    box-shadow: 0 4px 16px #f39c1244;
+}
+.leaderboard-item {
+    background: #fff3cd;
+    color: #902114;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 0.7rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    font-size: 1.08em;
+}
+.leaderboard-item .rank {
+    background: #f39c12;
+    color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    margin-left: 0.5em;
+}
+.leaderboard-item .name {
+    flex: 1;
+    text-align: right;
+}
+.leaderboard-item .solved {
+    color: #27ae60;
+}
+/* ...existing code... */
